@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Équipes générées</title>
+    <style>
+        /* Réinitialisation des marges et paddings pour une compatibilité totale */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Aligner en haut pour permettre le défilement */
+            background-color: #f3f4f6;
+            overflow-y: auto; /* Assure le défilement vertical */
+        }
+
+        /* Vidéo d'arrière-plan */
+        video#background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.6); /* Assombrir légèrement la vidéo pour une meilleure lisibilité */
+        }
+
+        /* Conteneur principal */
+        .container {
+            background-color: rgba(255, 255, 255, 0.75); /* Plus de transparence */
+            backdrop-filter: blur(5px); /* Flou plus subtil */
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            color: #333;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        /* Conteneur des équipes */
+        .teams {
+            display: flex;
+            flex-direction: column; /* Alignement vertical pour mobile */
+            gap: 20px;
+        }
+
+        /* Cartes d'équipe */
+        .team {
+            background: rgba(255, 255, 255, 0.7); /* Transparence pour les cartes */
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .team h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #333;
+            font-size: 16px;
+        }
+
+        /* Bouton pour revenir */
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .team h2 {
+                font-size: 20px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            li {
+                font-size: 14px;
+            }
+            
+            /* Style pour la version imprimée */
+            @media print {
+                body, .container {
+                    background: white !important;
+                    color: black !important;
+                }
+                
+                video, button, form {
+                    display: none !important;
+                }
+                
+                .teams {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 20px;
+                    page-break-inside: avoid;
+                }
+                
+                .team {
+                    border: 1px solid #ddd;
+                    box-shadow: none;
+                }
+                
+                footer {
+                    position: fixed;
+                    bottom: 0;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+        }
+
+        /* Animation d'apparition */
+        .team {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Style pour les stats des équipes */
+        .team-stats {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stats-item {
+            text-align: center;
+        }
+        
+        .stats-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .stats-value {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        /* Style pour le bouton d'impression */
+        .print-button {
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .print-button:hover {
+            background-color: #138496;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Vidéo d'arrière-plan locale -->
+    <video autoplay muted loop id="background-video">
+        <source src="{{ url_for('static', filename='background_teams.mp4') }}" type="video/mp4">
+        Votre navigateur ne supporte pas les vidéos HTML5.
+    </video>
+
+    <div class="container">
+        <h1>Voici les équipes générées :</h1>
+        
+        <div style="margin-bottom: 20px; padding: 10px; background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; color: #333;">
+            <h3 style="margin-bottom: 10px;">Statistiques des équipes</h3>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <div style="text-align: center; padding: 10px;">
+                    <span style="font-weight: bold;">Méthode utilisée :</span> 
+                    {% if team_method == 'skill' %}
+                        <span>Par compétence</span>
+                    {% elif team_method == 'snake' %}
+                        <span>Serpent</span>
+                    {% elif team_method == 'random' %}
+                        <span>Aléatoire</span>
+                    {% endif %}
+                </div>
+                <div style="text-align: center; padding: 10px;">
+                    <span style="font-weight: bold;">Équilibre :</span> 
+                    <span style="color: {% if balance_percent > 90 %}green{% elif balance_percent > 75 %}orange{% else %}red{% endif %};">
+                        {{ balance_percent }}%
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="teams">
+            <div class="team">
+                <h2>Équipe 1</h2>
+                <div class="team-stats">
+                    <div class="stats-item">
+                        <div class="stats-label">Force totale</div>
+                        <div class="stats-value">{{ team1_score }}</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Moyenne</div>
+                        <div class="stats-value">{{ team1_avg }}%</div>
+                    </div>
+                </div>
+                <ul>
+                    {% for player in team1 %}
+                    <li>{{ player }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="team">
+                <h2>Équipe 2</h2>
+                <div class="team-stats">
+                    <div class="stats-item">
+                        <div class="stats-label">Force totale</div>
+                        <div class="stats-value">{{ team2_score }}</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Moyenne</div>
+                        <div class="stats-value">{{ team2_avg }}%</div>
+                    </div>
+                </div>
+                <ul>
+                    {% for player in team2 %}
+                    <li>{{ player }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 20px; justify-content: center;">
+            <button type="button" onclick="window.print()" class="print-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="margin-right: 5px;" viewBox="0 0 16 16">
+                    <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                    <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                </svg>
+                Imprimer les équipes
+            </button>
+            
+            <form action="/" method="GET">
+                <button type="submit">Retour à la sélection</button>
+            </form>
+        </div>
+        
+        <footer style="margin-top: 20px; font-size: 14px; color: #333; text-align: center;">
+            Application créée par Badr - {{ current_year }}
+        </footer>
+    </div>
+</body>
+</html>
